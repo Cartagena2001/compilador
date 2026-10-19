@@ -1,0 +1,11 @@
+// Ejemplo con errores SEMÁNTICOS
+Inicio
+    Leer a
+    Escribir "Resultado: ", a + b
+    cero = 0
+    x = a / cero
+    Si (a > 10) Entonces
+        mayor = a
+    FinSi
+    Escribir mayor
+Fin

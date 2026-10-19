@@ -1,0 +1,11 @@
+// Ejemplo con errores SINTÁCTICOS
+Inicio
+    Leer nota
+    Si nota >= 6 Entonces
+        Escribir "Aprobado"
+    FinSi
+    escribir "Hola"
+    total = (nota + 2
+    Si (nota == 10) Entonces
+        Escribir "Excelente"
+Fin

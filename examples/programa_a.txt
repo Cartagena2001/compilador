@@ -1,0 +1,10 @@
+Inicio
+Escribir "Ingrese el primer número:"
+Leer a
+Escribir "Ingrese el segundo número:"
+Leer b
+Escribir "Ingrese el tercer número:"
+Leer c
+resultado = ((a + b) * c) - (a / b)
+Escribir "El resultado es: ", resultado
+Fin
