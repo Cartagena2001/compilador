@@ -1,0 +1,18 @@
+Inicio
+    Escribir "Ingrese la cantidad de números a ingresar:"
+    Leer n
+    Dimension numeros[n]
+    suma = 0
+    max = 0
+    Para i = 1 Hasta n Hacer
+        Escribir "Ingrese el número ", i, ":"
+        Leer numeros[i]
+        suma = suma + numeros[i]
+        Si numeros[i] > max Entonces
+            max = numeros[i]
+        FinSi
+    FinPara
+    promedio = suma / n
+    Escribir "El promedio es: ", promedio
+    Escribir "El número mayor es: ", max
+Fin

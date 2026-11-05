@@ -1,6 +1,6 @@
 """Nodos del árbol sintáctico abstracto (AST)."""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 
 
 @dataclass
@@ -23,6 +23,21 @@ class Variable(Nodo):
 @dataclass
 class Cadena(Nodo):
     texto: str
+
+
+@dataclass
+class Indice(Nodo):
+    """Acceso a un elemento de un arreglo (base 1): `numeros[i]`."""
+    nombre: str
+    indice: Nodo
+    columna: int = 0
+
+
+@dataclass
+class Llamada(Nodo):
+    nombre: str
+    argumentos: list
+    columna: int = 0
 
 
 @dataclass
@@ -51,15 +66,22 @@ class Comparacion(Nodo):
 
 
 @dataclass
-class Condicion(Nodo):
-    """Una o más comparaciones unidas con el operador lógico Y."""
-    comparaciones: list
+class Logica(Nodo):
+    """Condiciones unidas con `Y` u `O`."""
+    op: str
+    izq: Nodo
+    der: Nodo
+
+
+@dataclass
+class NoLogico(Nodo):
+    operando: Nodo
 
 
 # -- Instrucciones --------------------------------------------------------
 @dataclass
 class Leer(Nodo):
-    variable: Variable
+    destino: Variable | Indice
 
 
 @dataclass
@@ -69,20 +91,81 @@ class Escribir(Nodo):
 
 @dataclass
 class Asignacion(Nodo):
-    variable: Variable
+    destino: Variable | Indice
     expr: Nodo
 
 
 @dataclass
 class Si(Nodo):
-    condicion: Condicion
+    condicion: Nodo
     entonces: list
     sino: list | None = None
 
 
 @dataclass
+class Para(Nodo):
+    variable: Variable
+    inicio: Nodo
+    fin: Nodo
+    cuerpo: list
+
+
+@dataclass
+class Mientras(Nodo):
+    condicion: Nodo
+    cuerpo: list
+
+
+@dataclass
+class Dimension(Nodo):
+    nombre: str
+    tamano: Nodo
+    columna: int = 0
+
+
+@dataclass
+class Retornar(Nodo):
+    variable: Variable
+
+
+@dataclass
+class Funcion(Nodo):
+    """`Funcion retorno = nombre(parametros)`; su cuerpo termina con `Retornar`."""
+    nombre: str
+    retorno: Variable
+    parametros: list
+    cuerpo: list
+    columna: int = 0
+
+
+@dataclass
 class Programa(Nodo):
     instrucciones: list = field(default_factory=list)
+
+
+def recorrer(nodo):
+    """Recorre en profundidad un nodo (o lista de nodos) y todos sus descendientes."""
+    if isinstance(nodo, list):
+        for elemento in nodo:
+            yield from recorrer(elemento)
+    elif isinstance(nodo, Nodo):
+        yield nodo
+        for campo in fields(nodo):
+            yield from recorrer(getattr(nodo, campo.name))
+
+
+def asignadas(instrucciones) -> set:
+    """Nombres que reciben un valor dentro de las instrucciones dadas."""
+    nombres = set()
+    for n in recorrer(instrucciones):
+        match n:
+            case Leer(destino=d) | Asignacion(destino=d):
+                nombres.add(d.nombre)
+            case Para(variable=v):
+                nombres.add(v.nombre)
+            case Dimension(nombre=nombre):
+                nombres.add(nombre)
+    return nombres
 
 
 def arbol_texto(nodo, prefijo="", ultimo=True, raiz=True) -> list[str]:
@@ -103,6 +186,10 @@ class _Grupo:
         self.hijos = hijos
 
 
+def _destino(d) -> str:
+    return f"{d.nombre}[ ]" if isinstance(d, Indice) else d.nombre
+
+
 def _etiqueta(n) -> str:
     match n:
         case _Grupo():
@@ -110,15 +197,32 @@ def _etiqueta(n) -> str:
         case Programa():
             return "Programa"
         case Leer():
-            return f"Leer {n.variable.nombre}  (línea {n.linea})"
+            return f"Leer {_destino(n.destino)}  (línea {n.linea})"
         case Escribir():
             return f"Escribir  (línea {n.linea})"
         case Asignacion():
-            return f"Asignación {n.variable.nombre} =  (línea {n.linea})"
+            return f"Asignación {_destino(n.destino)} =  (línea {n.linea})"
         case Si():
             return f"Si{'-Sino' if n.sino is not None else ''}  (línea {n.linea})"
-        case Condicion():
-            return "Y" if len(n.comparaciones) > 1 else "Condición"
+        case Para():
+            return f"Para {n.variable.nombre}  (línea {n.linea})"
+        case Mientras():
+            return f"Mientras  (línea {n.linea})"
+        case Dimension():
+            return f"Dimension {n.nombre}  (línea {n.linea})"
+        case Funcion():
+            params = ", ".join(p.nombre for p in n.parametros)
+            return f"Función {n.retorno.nombre} = {n.nombre}({params})  (línea {n.linea})"
+        case Retornar():
+            return f"Retornar {n.variable.nombre}  (línea {n.linea})"
+        case Logica():
+            return n.op
+        case NoLogico():
+            return "NO"
+        case Indice():
+            return f"{n.nombre}[ ]"
+        case Llamada():
+            return f"Llamada {n.nombre}( )"
         case Comparacion():
             return f"( {n.op} )"
         case Binaria():
@@ -143,20 +247,32 @@ def _hijos(n) -> list:
         case Programa():
             return n.instrucciones
         case Leer():
-            return []
+            return [n.destino.indice] if isinstance(n.destino, Indice) else []
         case Escribir():
             return n.elementos
         case Asignacion():
-            return [n.expr]
+            return ([n.destino.indice] if isinstance(n.destino, Indice) else []) + [n.expr]
         case Si():
             hijos = [_Grupo("condición", [n.condicion]), _Grupo("Entonces", n.entonces)]
             if n.sino is not None:
                 hijos.append(_Grupo("Sino", n.sino))
             return hijos
-        case Condicion():
-            return n.comparaciones
-        case Comparacion() | Binaria():
+        case Comparacion() | Binaria() | Logica():
             return [n.izq, n.der]
+        case NoLogico():
+            return [n.operando]
+        case Para():
+            return [_Grupo("desde", [n.inicio]), _Grupo("hasta", [n.fin]), _Grupo("cuerpo", n.cuerpo)]
+        case Mientras():
+            return [_Grupo("condición", [n.condicion]), _Grupo("cuerpo", n.cuerpo)]
+        case Dimension():
+            return [_Grupo("tamaño", [n.tamano])]
+        case Funcion():
+            return n.cuerpo
+        case Indice():
+            return [n.indice]
+        case Llamada():
+            return n.argumentos
         case Agrupacion():
             return [n.expr]
         case Negativo():

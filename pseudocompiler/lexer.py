@@ -19,7 +19,19 @@ PALABRAS_RESERVADAS = {
     "Entonces": "ENTONCES",
     "Sino": "SINO",
     "FinSi": "FINSI",
+    "Para": "PARA",
+    "Hasta": "HASTA",
+    "Hacer": "HACER",
+    "FinPara": "FINPARA",
+    "Mientras": "MIENTRAS",
+    "FinMientras": "FINMIENTRAS",
+    "Dimension": "DIMENSION",
+    "Funcion": "FUNCION",
+    "Retornar": "RETORNAR",
+    "FinFuncion": "FINFUNCION",
     "Y": "Y",
+    "O": "O",
+    "NO": "NO",
 }
 
 # Descripción legible de cada tipo de token (para la tabla de tokens)
@@ -32,7 +44,19 @@ DESCRIPCION = {
     "ENTONCES": "Palabra reservada",
     "SINO": "Palabra reservada",
     "FINSI": "Palabra reservada",
+    "PARA": "Palabra reservada",
+    "HASTA": "Palabra reservada",
+    "HACER": "Palabra reservada",
+    "FINPARA": "Palabra reservada",
+    "MIENTRAS": "Palabra reservada",
+    "FINMIENTRAS": "Palabra reservada",
+    "DIMENSION": "Palabra reservada",
+    "FUNCION": "Palabra reservada",
+    "RETORNAR": "Palabra reservada",
+    "FINFUNCION": "Palabra reservada",
     "Y": "Operador lógico",
+    "O": "Operador lógico",
+    "NO": "Operador lógico",
     "ID": "Identificador",
     "NUMERO": "Número (constante)",
     "CADENA": "Cadena de texto",
@@ -41,6 +65,8 @@ DESCRIPCION = {
     "ASIGNACION": "Operador de asignación",
     "PAR_IZQ": "Paréntesis de apertura",
     "PAR_DER": "Paréntesis de cierre",
+    "CORCHETE_IZQ": "Corchete de apertura",
+    "CORCHETE_DER": "Corchete de cierre",
     "COMA": "Coma",
     "EOF": "Fin de archivo",
 }
@@ -127,6 +153,10 @@ class Lexer:
                 self._agregar("PAR_IZQ", self._avanzar(), linea, col)
             elif c == ")":
                 self._agregar("PAR_DER", self._avanzar(), linea, col)
+            elif c == "[":
+                self._agregar("CORCHETE_IZQ", self._avanzar(), linea, col)
+            elif c == "]":
+                self._agregar("CORCHETE_DER", self._avanzar(), linea, col)
             elif c == ",":
                 self._agregar("COMA", self._avanzar(), linea, col)
             elif c in "“”":

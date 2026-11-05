@@ -1,0 +1,21 @@
+// Ejemplo con errores SEMÁNTICOS de ciclos, arreglos y funciones
+Inicio
+    Funcion total = Sumar(a, b)
+        total = a + b
+        Retornar total
+    FinFuncion
+    Leer n
+    uno = Sumar(n)
+    dos = Restar(n, 1)
+    Escribir numeros[1]
+    Dimension lista[n]
+    lista = 5
+    Escribir n[1]
+    nombre = "Ana"
+    tres = nombre * 2
+    Para i = 1 Hasta 3 Hacer
+        suma = i
+    FinPara
+    Escribir suma
+    Escribir i
+Fin

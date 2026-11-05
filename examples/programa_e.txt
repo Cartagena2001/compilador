@@ -1,0 +1,22 @@
+Inicio
+    Funcion area = CalcularArea(base, altura)
+        area = base * altura
+        Retornar area
+    FinFuncion
+    Funcion clasificacion = ClasificarArea(area)
+        Si area > (50) Entonces
+            clasificacion = "Grande"
+        Sino
+            clasificacion = "Pequeña"
+        FinSi
+        Retornar clasificacion
+    FinFuncion
+    Escribir "Ingrese la base:"
+    Leer base
+    Escribir "Ingrese la altura:"
+    Leer altura
+    areaCalculada = CalcularArea(base, altura)
+    resultado = ClasificarArea(areaCalculada)
+    Escribir "El área es: ", areaCalculada
+    Escribir "Clasificación: ", resultado
+Fin
