@@ -1,14 +1,5 @@
 """Compilador por línea de comandos.
 
-Uso:  python -m pseudocompiler entrada.txt [-o carpeta]
-
-Lee el pseudocódigo y escribe en la carpeta indicada (por defecto, la del
-archivo de entrada):
-
-* `<nombre>_errores.txt`: errores y advertencias, o "Sin errores".
-* `<nombre>_python.txt` y `<nombre>_javascript.txt`: el código traducido, solo
-  si no hubo errores.
-
 Termina con código 0 si compiló, 1 si el programa tiene errores y 2 si no se
 pudo leer la entrada.
 """

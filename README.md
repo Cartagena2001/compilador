@@ -1,7 +1,6 @@
 # PseudoCompilador 95
 
-Compilador de pseudocódigo en español a **Python** y **JavaScript**, con interfaz
-gráfica estilo escritorio de los 90. Proyecto de Autómatas y Compiladores (AYC941).
+Compilador de pseudocódigo en español a **Python** y **JavaScript**, Proyecto de Autómatas y Compiladores (AYC941).
 
 ![fases](https://img.shields.io/badge/fases-léxico%20·%20sintáctico%20·%20semántico%20·%20síntesis-008080)
 
@@ -50,8 +49,6 @@ Fin
 Además se admiten comentarios `//` y el menos unario (`x = -5`).
 
 ### Gramática (EBNF)
-
-Sustituye a la de la Fase 1. También está en `pseudocompiler/parser.py`.
 
 ```
 programa      = "Inicio", { funcion | instruccion }, "Fin" ;
@@ -147,7 +144,7 @@ en el programa y 2 si no pudo leer la entrada.
 python -m venv .venv
 .venv/bin/pip install -r requirements.txt
 .venv/bin/python main.py           # abrir la interfaz
-.venv/bin/python -m pytest tests   # pruebas (incluye los 15 casos de los programas A-E)
+.venv/bin/python -m pytest tests   # pruebas 
 .venv/bin/python build.py          # generar el ejecutable en dist/
 ```
 

@@ -1,4 +1,4 @@
-"""Fase 3: Análisis semántico.
+"""Análisis semántico.
 
 Verifica el significado del programa sobre el AST:
 
@@ -58,8 +58,7 @@ PARAMETRO = "Parámetro"
 RETORNO = "Retorno"
 FUNCION = "Función"
 
-# Tipos. SIN_TIPO es compatible con todos: su valor solo se conoce al ejecutar
-# (por ejemplo, un parámetro que la función recibe sin operar con él).
+# Tipos
 NUMERO = "Número"
 TEXTO = "Texto"
 ARREGLO = "Arreglo"
@@ -289,9 +288,7 @@ class AnalizadorSemantico:
                     c1, c2 = dict(constantes), dict(constantes)
                     d1 = self._flujo(ins.entonces, set(definidas), c1)
                     d2 = self._flujo(ins.sino or [], set(definidas), c2)
-                    # tras el Si, solo quedan definidas las que se asignan en ambas ramas
                     definidas |= d1 & d2
-                    # solo se conservan las constantes iguales en ambas ramas
                     for k in list(constantes):
                         del constantes[k]
                     for k, val in c1.items():
@@ -300,8 +297,7 @@ class AnalizadorSemantico:
                 case ast.Para():
                     self._para(ins, definidas, constantes)
                 case ast.Mientras():
-                    # El cuerpo puede repetirse: lo que asigna deja de ser constante
-                    # y, como puede no ejecutarse, no garantiza ninguna definición.
+                    # El cuerpo puede repetirse
                     self._olvidar(ast.asignadas(ins.cuerpo), constantes)
                     self._condicion(ins.condicion, definidas, constantes)
                     self._flujo(ins.cuerpo, set(definidas), dict(constantes))

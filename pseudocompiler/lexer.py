@@ -1,4 +1,4 @@
-"""Fase 1: Análisis léxico.
+"""nálisis léxico.
 
 Recorre el código fuente carácter por carácter y lo divide en tokens:
 palabras reservadas, identificadores, números, cadenas, operadores y
@@ -34,7 +34,7 @@ PALABRAS_RESERVADAS = {
     "NO": "NO",
 }
 
-# Descripción legible de cada tipo de token (para la tabla de tokens)
+# Descripción legible de cada tipo de token
 DESCRIPCION = {
     "INICIO": "Palabra reservada",
     "FIN": "Palabra reservada",
@@ -224,7 +224,7 @@ class Lexer:
                 lexema = self.codigo[inicio:self.pos]
                 self._error(f"número mal formado '{lexema}': tiene más de un punto decimal", linea, col)
                 return
-        # Un número pegado a letras (ej. 2abc) no es un identificador válido
+        # Un número junto a letras no es válido
         if _es_letra(self._actual()) or self._actual() == "_":
             while _es_letra(self._actual()) or _es_digito(self._actual()) or self._actual() == "_":
                 self._avanzar()
