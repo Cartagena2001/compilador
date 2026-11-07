@@ -1,7 +1,7 @@
 // Ejemplo con errores SINTÁCTICOS
 Inicio
     Leer nota
-    Si nota >= 6 Entonces
+    Si nota >= 6
         Escribir "Aprobado"
     FinSi
     escribir "Hola"

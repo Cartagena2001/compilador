@@ -26,10 +26,14 @@ DESTINOS = {"Python": ("python", "SALIDA.PY", ".py"), "JavaScript": ("javascript
 EJEMPLOS = [
     ("Programa A - Operaciones aritméticas", "programa_a.txt"),
     ("Programa B - Condicionales anidados", "programa_b.txt"),
+    ("Programa C - Factorial y suma (Para)", "programa_c.txt"),
+    ("Programa D - Promedio y mayor (arreglos)", "programa_d.txt"),
+    ("Programa E - Área y clasificación (funciones)", "programa_e.txt"),
     None,
     ("Errores léxicos", "errores_lexicos.txt"),
     ("Errores sintácticos", "errores_sintacticos.txt"),
     ("Errores semánticos", "errores_semanticos.txt"),
+    ("Errores de ciclos, arreglos y funciones", "errores_ciclos_arreglos_funciones.txt"),
 ]
 
 CODIGO_INICIAL = """// Bienvenido a PseudoCompilador 95
@@ -460,8 +464,8 @@ class VentanaPrincipal(QMainWindow):
 
     DESCRIPCION_FASE = {
         "lexico": "Reconociendo tokens: palabras reservadas, identificadores, números, cadenas y operadores...",
-        "sintactico": "Verificando la gramática (EBNF) y el anidamiento de los bloques Si / Sino / FinSi...",
-        "semantico": "Comprobando el uso de variables, condiciones y posibles divisiones entre cero...",
+        "sintactico": "Verificando la gramática (EBNF) y el anidamiento de los bloques Si, Para, Mientras y Funcion...",
+        "semantico": "Comprobando variables, tipos, arreglos, funciones, condiciones y posibles divisiones entre cero...",
         "sintesis": "Recorriendo el AST y traduciendo a Python y JavaScript...",
     }
 
@@ -789,12 +793,17 @@ class VentanaPrincipal(QMainWindow):
         inicio = DOC_GRAMATICA.index("programa ")
         fin = DOC_GRAMATICA.index("Extensión")
         txt.setPlainText(
-            "PALABRAS RESERVADAS\n  Inicio Fin Leer Escribir Si Entonces Sino FinSi Y\n\n"
+            "PALABRAS RESERVADAS\n  Inicio Fin Leer Escribir Si Entonces Sino FinSi\n"
+            "  Para Hasta Hacer FinPara Mientras FinMientras Dimension\n"
+            "  Funcion Retornar FinFuncion Y O NO\n\n"
             "OPERADORES\n  Aritméticos: + - * /     Relacionales: >= <= > < == !=\n"
-            "  Asignación: =             Lógico: Y\n\n"
+            "  Asignación: =             Lógicos: Y O NO\n\n"
             "REGLAS DE PRODUCCIÓN (EBNF)\n" + DOC_GRAMATICA[inicio:fin].rstrip() + "\n\n"
             "NOTAS\n"
-            "  * Cada comparación va entre paréntesis: Si (a > 5) Y (b < 3) Entonces\n"
+            "  * Las comparaciones van con o sin paréntesis: Si (a > 5) Y b < 3 Entonces\n"
+            "  * Los arreglos comienzan en 1: Dimension v[n] crea de v[1] a v[n].\n"
+            "  * Las funciones se declaran antes de llamarse y solo ven sus parámetros\n"
+            "    y variables locales. Terminan con Retornar <variable de retorno>.\n"
             "  * Las palabras reservadas distinguen mayúsculas y minúsculas.\n"
             "  * Los identificadores usan letras sin tilde, dígitos y '_'.\n"
             "  * Comentarios: // hasta el final de la línea.\n"

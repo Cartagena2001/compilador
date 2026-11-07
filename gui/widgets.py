@@ -230,10 +230,13 @@ class Resaltador(QSyntaxHighlighter):
 
 class ResaltadorPseudo(Resaltador):
     def __init__(self, documento):
-        palabras = r"\b(Inicio|Fin|Leer|Escribir|Si|Entonces|Sino|FinSi)\b"
+        palabras = (
+            r"\b(Inicio|Fin|Leer|Escribir|Si|Entonces|Sino|FinSi|Para|Hasta|Hacer|FinPara"
+            r"|Mientras|FinMientras|Dimension|Funcion|Retornar|FinFuncion)\b"
+        )
         reglas = [
             (palabras, _fmt(theme.NAVY, True)),
-            (r"\bY\b", _fmt("#800080", True)),
+            (r"\b(Y|O|NO)\b", _fmt("#800080", True)),
             (r"\b\d+(\.\d+)?\b", _fmt("#008080")),
             (r"(>=|<=|==|!=|[<>=+\-*/])", _fmt("#800000")),
         ]
