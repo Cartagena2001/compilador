@@ -95,6 +95,25 @@ def test_programa_d_division_entre_cero_es_error_de_ejecucion():
         assert js.returncode != 0 and "división entre cero" in js.stderr
 
 
+@pytest.mark.parametrize("entrada", ["h", "3.5.", "1\\", "", "0x10"])
+def test_entrada_invalida_es_error_de_ejecucion(entrada):
+    r = compilar((EJEMPLOS / "programa_a.txt").read_text(encoding="utf-8"))
+    py = _ejecutar([sys.executable, "-c", r.python], [entrada, "1", "1"])
+    assert py.returncode != 0 and "ValueError" in py.stderr
+    if NODE:
+        js = _ejecutar([NODE, "-e", r.javascript], [entrada, "1", "1"])
+        assert js.returncode != 0 and "no es un número válido" in js.stderr
+
+
+@pytest.mark.parametrize("entrada,esperado", [("3.", "El resultado es: 4"), (".5", "El resultado es: 0.5"),
+                                              (" -2 ", "El resultado es: -2"), ("1e1", "El resultado es: 0")])
+def test_formatos_de_numero_aceptados(entrada, esperado):
+    r = compilar("Inicio\nLeer a\nb = a\nSi a > 5 Entonces\nb = a - 10\nFinSi\nSi a == 3 Entonces\nb = a + 1\nFinSi\nEscribir \"El resultado es: \", b\nFin")
+    assert _ultima(_correr_python(r.python, [entrada])) == esperado
+    if NODE:
+        assert _ultima(_correr_js(r.javascript, [entrada])) == esperado
+
+
 def test_programa_d_renombra_max_solo_en_python():
     r = compilar((EJEMPLOS / "programa_d.txt").read_text(encoding="utf-8"))
     assert "max_ = 0" in r.python

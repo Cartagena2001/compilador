@@ -164,14 +164,15 @@ class EjecutorJS(Ejecutor):
 
     def _fin(self, codigo, _estado):
         if self._stderr.strip():
-            m = re.search(r"salida\.js:(\d+)", self._stderr)
+            lineas = [int(n) for n in re.findall(r"salida\.js:(\d+)", self._stderr)]
             error = next(
                 (l.strip() for l in self._stderr.splitlines() if re.match(r"\s*\w*Error\b", l)),
                 self._stderr.strip().splitlines()[-1],
             )
+            error = re.sub(r"^Error:\s*", "", error)  
             donde = ""
-            if m:
-                lg = int(m.group(1))
+            if lineas:
+                lg = next((l for l in lineas if _linea_pseudo(self._mapa, l)), lineas[0])
                 lp = _linea_pseudo(self._mapa, lg)
                 donde = f" (línea {lg} de salida.js" + (f", línea {lp} del pseudocódigo)" if lp else ")")
             self.salida.emit(f"\nError en tiempo de ejecución{donde}: {error}\n", "err")
