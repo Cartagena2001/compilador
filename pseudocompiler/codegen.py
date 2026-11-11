@@ -301,7 +301,13 @@ class GeneradorJS(_GenBase):
         if usa_leer:
             self.emitir("const rl = readline.createInterface({ input: process.stdin });")
             self.emitir("const lineas = rl[Symbol.asyncIterator]();")
-            self.emitir("const leer = async () => Number((await lineas.next()).value);", "Leer: línea -> número")
+            self.emitir("const leer = async () => {", "Leer: línea -> número")
+            self.emitir('  const texto = (await lineas.next()).value ?? "";')
+            self.emitir("  if (!/^\\s*[+-]?(\\d+\\.?\\d*|\\.\\d+)([eE][+-]?\\d+)?\\s*$/.test(texto)) {")
+            self.emitir("    throw new Error(`la entrada '${texto}' no es un número válido`);")
+            self.emitir("  }")
+            self.emitir("  return Number(texto);")
+            self.emitir("};")
         variables_let = self._variables_let()
         if variables_let:
             self.emitir(f"let {', '.join(variables_let)};", "variables que cambian o se asignan en bloques")
